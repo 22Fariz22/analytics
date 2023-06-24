@@ -10,8 +10,5 @@ func main() {
 
 	app := app.NewApp(cfg)
 	app.Run()
-	//if err != nil {
-	//	log.Error(err)
-	//	return
-	//}
+
 }

@@ -2,10 +2,13 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"github.com/22Fariz22/analytics/internal/audit"
 	"github.com/22Fariz22/analytics/internal/audit/worker"
 	"github.com/22Fariz22/analytics/internal/config"
 	"github.com/22Fariz22/analytics/pkg/logger"
+	"io"
+	"log"
 	"net/http"
 )
 
@@ -27,10 +30,24 @@ func NewHandler(repo audit.UseCase, cfg *config.Config, workers *worker.Pool, l 
 	}
 }
 
-func (h *Handler) GetAnalytics(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
+	log.Println("handler GetAnalytics.")
 
-	///unmarshall json
+	//var dataAnalytics *entity.Analytics
+
+	payload, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.l.Error("can't read body request", err)
+		http.Error(w, "", 500)
+	}
+
+	fmt.Println("payload", string(payload))
+
+	//if err := json.Unmarshal(payload, &dataAnalytics); err != nil {
+	//	h.l.Info("error unmarshall", err)
+	//	return
+	//}
 
 	h.Workers.AddJob(ctx, h.l) //add data from unmarshalled data
 

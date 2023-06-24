@@ -11,29 +11,29 @@ import (
 
 // Pool структура для воркера
 type Pool struct {
-	l          logger.Interface
-	wg         sync.WaitGroup
-	once       sync.Once
-	shutDown   chan struct{}
-	mainCh     chan workerData
-	repository audit.Repo
+	l        logger.Interface
+	wg       sync.WaitGroup
+	once     sync.Once
+	shutDown chan struct{}
+	mainCh   chan workerData
+	UC       audit.UseCase
 }
 
 // NewWorkerPool создание воркера
-func NewWorkerPool(l logger.Interface, repo audit.Repo) *Pool {
+func NewWorkerPool(l logger.Interface, UC audit.UseCase) *Pool {
 	return &Pool{
-		l:          l,
-		wg:         sync.WaitGroup{},
-		once:       sync.Once{},
-		shutDown:   make(chan struct{}),
-		mainCh:     make(chan workerData, 10),
-		repository: repo,
+		l:        l,
+		wg:       sync.WaitGroup{},
+		once:     sync.Once{},
+		shutDown: make(chan struct{}),
+		mainCh:   make(chan workerData, 10),
+		UC:       UC,
 	}
 }
 
 // workerData структура содержания воркера
 type workerData struct {
-	data []*entity.Data
+	data []*entity.Analytics
 }
 
 // AddJob запуск в handler
@@ -63,7 +63,7 @@ func (w *Pool) RunWorkers(count int) {
 						return
 					}
 
-					err := w.repository.Save(context.Background(), w.l, data.data)
+					err := w.UC.Save(context.Background(), w.l, data.data)
 					if err != nil {
 						w.l.Info("", err)
 					}

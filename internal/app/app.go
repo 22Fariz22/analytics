@@ -13,9 +13,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"log"
-	"net"
 	"net/http"
-	"time"
 )
 
 type app struct {
@@ -42,14 +40,9 @@ func NewApp(cfg *config.Config) *app {
 	}
 }
 
-func (a *app) Run() error {
+func (a *app) Run() {
 	l := logger.New("debug")
-
-	listen, err := net.Listen("tcp", ":8080")
-	if err != nil {
-		return err
-	}
-	defer listen.Close()
+	l.Info("app start")
 
 	workers := worker.NewWorkerPool(l, a.UC)
 	workers.RunWorkers(10)
@@ -60,11 +53,10 @@ func (a *app) Run() error {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(2 * time.Second))
 
 	hd := handler.NewHandler(a.UC, a.cfg, workers, l)
 
-	r.Get("/analitycs", hd.GetAnalytics)
+	r.Post("/analitycs", hd.Analitycs)
 
-	return nil
+	http.ListenAndServe(":8080", r)
 }

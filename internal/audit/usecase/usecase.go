@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"github.com/22Fariz22/analytics/internal/audit"
 	"github.com/22Fariz22/analytics/internal/audit/entity"
 	"github.com/22Fariz22/analytics/pkg/logger"
@@ -17,6 +18,9 @@ func NewUseCase(repo audit.Repo) *useCase {
 }
 
 // Save delivery data to usecase method
-func (u *useCase) Save(ctx context.Context, l logger.Interface, data []*entity.Data) error {
+func (u *useCase) Save(ctx context.Context, l logger.Interface, data []*entity.Analytics) error {
+
+	fmt.Println("data:", data)
+
 	return u.repo.Save(ctx, l, data)
 }
