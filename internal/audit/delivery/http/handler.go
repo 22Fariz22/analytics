@@ -2,14 +2,16 @@ package http
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"github.com/22Fariz22/analytics/internal/audit"
+	"github.com/22Fariz22/analytics/internal/audit/entity"
 	"github.com/22Fariz22/analytics/internal/audit/worker"
 	"github.com/22Fariz22/analytics/internal/config"
 	"github.com/22Fariz22/analytics/pkg/logger"
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Handler структура хэндлер
@@ -34,7 +36,7 @@ func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	log.Println("handler GetAnalytics.")
 
-	//var dataAnalytics *entity.Analytics
+	var dataBody *entity.DataBody
 
 	payload, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -42,14 +44,20 @@ func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", 500)
 	}
 
-	fmt.Println("payload", string(payload))
+	if err := json.Unmarshal(payload, &dataBody); err != nil {
+		h.l.Info("error unmarshall", err)
+		return
+	}
 
-	//if err := json.Unmarshal(payload, &dataAnalytics); err != nil {
-	//	h.l.Info("error unmarshall", err)
-	//	return
-	//}
+	userID := r.Header.Get("X-Tantum-Authorization")
 
-	h.Workers.AddJob(ctx, h.l) //add data from unmarshalled data
+	analitycsData := &entity.Analytics{
+		UploadedAt: time.Now(),
+		UserID:     userID,
+		Data:       *dataBody,
+	}
+
+	h.Workers.AddJob(ctx, h.l, analitycsData) //add data from unmarshalled data
 
 	//status 202
 	w.WriteHeader(http.StatusAccepted)

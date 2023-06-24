@@ -37,7 +37,7 @@ type workerData struct {
 }
 
 // AddJob запуск в handler
-func (w *Pool) AddJob(ctx context.Context, l logger.Interface) error {
+func (w *Pool) AddJob(ctx context.Context, l logger.Interface, data *entity.Analytics) error {
 	select {
 	case <-w.shutDown:
 		return errors.New("all channels are closed")
