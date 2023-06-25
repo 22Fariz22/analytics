@@ -5,10 +5,15 @@ import "time"
 type Analytics struct {
 	UploadedAt time.Time
 	UserID     string
-	Data       DataBody
+	Data       DataUser
 }
 
-type DataBody struct {
+type DataUser struct {
+	Headers map[string]string `json:"headers"`
+	Body    BodyData          `json:"body"`
+}
+
+type BodyData struct {
 	Module string     `json:"module"`
 	Type   string     `json:"type"`
 	Event  string     `json:"event"`

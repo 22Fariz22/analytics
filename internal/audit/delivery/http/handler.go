@@ -36,7 +36,9 @@ func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	log.Println("handler GetAnalytics.")
 
-	var dataBody *entity.DataBody
+	var dataUser entity.DataUser
+	//var headers *entity.HeadersData
+	//var body entity.BodyData
 
 	payload, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -44,17 +46,25 @@ func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", 500)
 	}
 
-	if err := json.Unmarshal(payload, &dataBody); err != nil {
+	if err := json.Unmarshal(payload, &dataUser.Body); err != nil {
 		h.l.Info("error unmarshall", err)
 		return
 	}
+
+	headers := map[string]string{}
+	//headers append to struct for repo
+	for i := range r.Header {
+		headers[i] = r.Header.Get(i)
+		//fmt.Println(i, " : ", r.Header.Get(i))
+	}
+	dataUser.Headers = headers
 
 	userID := r.Header.Get("X-Tantum-Authorization")
 
 	analitycsData := &entity.Analytics{
 		UploadedAt: time.Now(),
 		UserID:     userID,
-		Data:       *dataBody,
+		Data:       dataUser,
 	}
 
 	h.Workers.AddJob(ctx, h.l, analitycsData) //add data from unmarshalled data

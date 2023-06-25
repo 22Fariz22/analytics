@@ -2,6 +2,9 @@ package app
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/22Fariz22/analytics/internal/audit"
 	handler "github.com/22Fariz22/analytics/internal/audit/delivery/http"
 	"github.com/22Fariz22/analytics/internal/audit/storage"
@@ -12,8 +15,6 @@ import (
 	"github.com/22Fariz22/analytics/pkg/postgres"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"log"
-	"net/http"
 )
 
 type app struct {

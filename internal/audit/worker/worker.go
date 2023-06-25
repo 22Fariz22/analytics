@@ -33,16 +33,16 @@ func NewWorkerPool(l logger.Interface, UC audit.UseCase) *Pool {
 
 // workerData структура содержания воркера
 type workerData struct {
-	data []*entity.Analytics
+	data *entity.Analytics
 }
 
 // AddJob запуск в handler
-func (w *Pool) AddJob(ctx context.Context, l logger.Interface, data *entity.Analytics) error {
+func (w *Pool) AddJob(ctx context.Context, l logger.Interface, dataAnalytics *entity.Analytics) error {
 	select {
 	case <-w.shutDown:
 		return errors.New("all channels are closed")
 	case w.mainCh <- workerData{
-		////
+		data: dataAnalytics,
 	}:
 		return nil
 	}
@@ -62,7 +62,6 @@ func (w *Pool) RunWorkers(count int) {
 					if !ok {
 						return
 					}
-
 					err := w.UC.Save(context.Background(), w.l, data.data)
 					if err != nil {
 						w.l.Info("", err)

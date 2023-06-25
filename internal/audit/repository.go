@@ -8,5 +8,5 @@ import (
 
 // Repo interface for storages
 type Repo interface {
-	Save(ctx context.Context, l logger.Interface, data []*entity.Analytics) error
+	Save(ctx context.Context, l logger.Interface, data *entity.Analytics) error
 }

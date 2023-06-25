@@ -8,5 +8,5 @@ import (
 
 // UseCase interface for usecase
 type UseCase interface {
-	Save(ctx context.Context, l logger.Interface, data []*entity.Analytics) error
+	Save(ctx context.Context, l logger.Interface, data *entity.Analytics) error
 }

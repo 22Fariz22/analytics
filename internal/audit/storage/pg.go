@@ -17,7 +17,7 @@ func NewPGRepository(db *postgres.Postgres) *pgRepository {
 }
 
 // Save url to db
-func (p *pgRepository) Save(ctx context.Context, l logger.Interface, data []*entity.Analytics) error {
+func (p *pgRepository) Save(ctx context.Context, l logger.Interface, data *entity.Analytics) error {
 
 	return nil
 }
