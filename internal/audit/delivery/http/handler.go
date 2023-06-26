@@ -9,7 +9,6 @@ import (
 	"github.com/22Fariz22/analytics/internal/audit/worker"
 	"github.com/22Fariz22/analytics/pkg/logger"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -34,11 +33,14 @@ func NewHandler(repo audit.UseCase, cfg *config.Config, workers *worker.Pool, l 
 
 func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	log.Println("handler GetAnalytics.")
+
+	type response struct {
+		Status string `json:"status"`
+	}
+
+	resp := &response{Status: "OK"}
 
 	var dataUser entity.DataUser
-	//var headers *entity.HeadersData
-	//var body entity.BodyData
 
 	payload, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -55,7 +57,6 @@ func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 	//headers append to struct for repo
 	for i := range r.Header {
 		headers[i] = r.Header.Get(i)
-		//fmt.Println(i, " : ", r.Header.Get(i))
 	}
 	dataUser.Headers = headers
 
@@ -67,8 +68,16 @@ func (h *Handler) Analitycs(w http.ResponseWriter, r *http.Request) {
 		Data:       dataUser,
 	}
 
-	h.Workers.AddJob(ctx, h.l, analitycsData) //add data from unmarshalled data
+	h.Workers.AddJob(ctx, h.l, analitycsData)
 
-	//status 202
+	w.Header().Set("Content-Type", "application/json")
+
+	//HTTP status 202
 	w.WriteHeader(http.StatusAccepted)
+
+	res, err := json.Marshal(resp)
+	if err != nil {
+		h.l.Info("error json.Marshal.", err)
+	}
+	w.Write(res)
 }
