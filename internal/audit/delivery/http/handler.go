@@ -3,10 +3,10 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"github.com/22Fariz22/analytics/config"
 	"github.com/22Fariz22/analytics/internal/audit"
 	"github.com/22Fariz22/analytics/internal/audit/entity"
 	"github.com/22Fariz22/analytics/internal/audit/worker"
-	"github.com/22Fariz22/analytics/internal/config"
 	"github.com/22Fariz22/analytics/pkg/logger"
 	"io"
 	"log"

@@ -1,14 +1,19 @@
 package main
 
 import (
+	"github.com/22Fariz22/analytics/config"
 	"github.com/22Fariz22/analytics/internal/app"
-	"github.com/22Fariz22/analytics/internal/config"
+	"log"
 )
 
 func main() {
-	cfg := config.NewConfig()
+	// Configuration
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Config error: %s", err)
+	}
 
+	// Run
 	app := app.NewApp(cfg)
 	app.Run()
-
 }

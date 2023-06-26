@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"github.com/22Fariz22/analytics/config"
 	"log"
 	"net/http"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/22Fariz22/analytics/internal/audit/storage"
 	"github.com/22Fariz22/analytics/internal/audit/usecase"
 	"github.com/22Fariz22/analytics/internal/audit/worker"
-	"github.com/22Fariz22/analytics/internal/config"
 	"github.com/22Fariz22/analytics/pkg/logger"
 	"github.com/22Fariz22/analytics/pkg/postgres"
 	"github.com/go-chi/chi/v5"
@@ -27,7 +27,7 @@ type app struct {
 func NewApp(cfg *config.Config) *app {
 
 	// Repository
-	db, err := postgres.New(cfg.DatabaseURI, postgres.MaxPoolSize(2))
+	db, err := postgres.New(cfg.PG.URL, postgres.MaxPoolSize(cfg.PG.PoolMax))
 	if err != nil {
 		log.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
 	}
@@ -42,7 +42,7 @@ func NewApp(cfg *config.Config) *app {
 }
 
 func (a *app) Run() {
-	l := logger.New("debug")
+	l := logger.New(a.cfg.Log.Level)
 	l.Info("app start")
 
 	workers := worker.NewWorkerPool(l, a.UC)
@@ -59,5 +59,5 @@ func (a *app) Run() {
 
 	r.Post("/analitycs", hd.Analitycs)
 
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(a.cfg.Port, r)
 }
