@@ -34,7 +34,6 @@ docker-rm-volume: ### remove docker volume
 
 bin-deps:
 	GOBIN=$(LOCAL_BIN) go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-	GOBIN=$(LOCAL_BIN) go install github.com/golang/mock/mockgen@latest
 
 
 #migrate_up:
