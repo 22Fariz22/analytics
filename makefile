@@ -35,10 +35,3 @@ docker-rm-volume: ### remove docker volume
 bin-deps:
 	GOBIN=$(LOCAL_BIN) go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-
-#migrate_up:
-#	migrate -path migrations/ -database "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" -verbose up
-#
-#migrate_down:
-#	migrate -path migrations/ -database "postgresql://postgres:postgres@localhost:5432/audit?sslmode=disable" -verbose down
-

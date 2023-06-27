@@ -64,7 +64,9 @@ func (w *Pool) RunWorkers(count int) {
 					}
 					err := w.UC.Save(context.Background(), w.l, data.data)
 					if err != nil {
-						w.l.Info("", err)
+						w.l.Info("error in RunWorkers:", err)
+						// в случае ошибки вернуть данные в очередь ?
+						//w.AddJob(context.Background(),w.l,data.data)
 					}
 				}
 			}

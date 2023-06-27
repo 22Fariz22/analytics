@@ -2,8 +2,6 @@ package storage
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/22Fariz22/analytics/internal/audit/entity"
 	"github.com/22Fariz22/analytics/pkg/logger"
 	"github.com/22Fariz22/analytics/pkg/postgres"
@@ -23,8 +21,8 @@ func (p *pgRepository) Save(ctx context.Context, l logger.Interface, data *entit
 	_, err := p.Pool.Exec(ctx, `insert into audit (user_id, time,data) values($1, $2, $3)`,
 		data.UserID, data.UploadedAt, data)
 	if err != nil {
-		fmt.Println("err exec:", err)
-
+		l.Error("error Save:", err)
+		return err
 	}
 
 	return nil
